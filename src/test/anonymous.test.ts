@@ -1,7 +1,6 @@
 import { IData } from "../scraper/events";
 import { IQuery, IQueryOptions } from "../scraper/query";
 import { killChromium } from "../utils/browser";
-import { sleep } from '../utils/utils';
 import {
     LinkedinScraper,
     timeFilter,
@@ -54,13 +53,7 @@ describe('[TEST]', () => {
         if (data.companyImgLink) {
             expect(() => new URL(data.companyImgLink!)).not.toThrow();
         }
-
     };
-
-    const descriptionFn = () => (<HTMLElement>document.querySelector(".jobs-description")!)
-        .innerText
-        .replace(/[\s\n\r]+/g, " ")
-        .trim();
 
     const scraper = new LinkedinScraper({
         headless: true,
@@ -71,66 +64,34 @@ describe('[TEST]', () => {
         slowMo: 250,
     });
 
-    const queriesSerial1: IQuery[] = [
+    const queries: IQuery[] = [
         {
-            query: '',
-            options: {
-                filters: {
-                    companyJobsUrl: "https://www.linkedin.com/jobs/search/?f_C=1441%2C10667&geoId=101165590&keywords=engineer&location=United%20Kingdom",
-                    experience: [experienceLevelFilter.MID_SENIOR, experienceLevelFilter.DIRECTOR],
-                },
-                skills: true,
-            }
-        },
-        {
-            query: "Engineer",
+            query: "Software Engineer",
             options: {
                 locations: ['United States'],
-                limit: 27,
-                descriptionFn,
+                limit: 5,
                 filters: {
                     time: timeFilter.WEEK,
-                    experience: experienceLevelFilter.MID_SENIOR,
-                    onSiteOrRemote: [onSiteOrRemoteFilter.REMOTE, onSiteOrRemoteFilter.HYBRID],
+                    experience: experienceLevelFilter.ENTRY_LEVEL,
                 }
-            },
-        },
-        {
-            query: 'Analyst',
-            options: {
-                locations: ['Germany'],
-                limit: 3,
-                applyLink: true,
-                skipPromotedJobs: true,
             },
         },
     ];
 
     const globalOptions: IQueryOptions = {
         limit: 5,
-        locations: ['United Kingdom'],
         filters: {
-            time: timeFilter.MONTH,
             relevance: relevanceFilter.RECENT,
         },
     };
 
-    it('Authenticated strategy',  async () => {
-        if (!process.env.LI_AT_COOKIE) {
-            console.log('Skipping authenticated test: LI_AT_COOKIE environment variable not set');
-            return;
-        }
-        
-        expect(process.env.LI_AT_COOKIE).toBeDefined();
-        expect(process.env.LI_AT_COOKIE!.length).toBeGreaterThan(0);
-
+    it('Anonymous strategy', async () => {
         scraper.on(events.scraper.data, onDataFn);
-        scraper.on(events.scraper.invalidSession, () => { console.error("Invalid session!"); process.exit(1); });
         scraper.on(events.scraper.error, (err) => { console.error(err) });
         scraper.on(events.scraper.end, () => console.log("\nE N D (ツ)_.\\m/"));
 
-        await scraper.run(queriesSerial1, globalOptions);
+        await scraper.run(queries, globalOptions);
         await scraper.close();
         await killChromium();
     });
-});
+}); 

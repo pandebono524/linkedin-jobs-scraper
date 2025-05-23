@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spinlud/linkedin-jobs-scraper.git"
+    "url": "git+https://github.com/pandebono524/linkedin-jobs-scraper.git"
   },
   "bugs": {
-    "url": "https://github.com/spinlud/linkedin-jobs-scraper.git/issues"
+    "url": "https://github.com/pandebono524/linkedin-jobs-scraper.git/issues"
   },
-  "homepage": "https://github.com/spinlud/linkedin-jobs-scraper.git#readme",
+  "homepage": "https://github.com/pandebono524/linkedin-jobs-scraper.git#readme",
   "author": "Ludovico Fabbri",
   "license": "MIT",
   "dependencies": {
